@@ -321,6 +321,45 @@
             transition: width 0.5s ease;
         }
 
+        .nota-corte-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .nota-corte-card.dentro {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .nota-corte-card .titulo {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .nota-corte-card .nota {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .nota-corte-card .comparacao {
+            font-size: 0.85rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .nota-corte-card .diferenca {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
         .info-box {
             background: #e7f3ff;
             border: 1px solid #b6d4fe;
@@ -454,6 +493,13 @@
             <div class="resultado-header" id="resultadoHeader">
                 <h3 id="statusText"></h3>
                 <p id="statusSubtext"></p>
+            </div>
+
+            <div class="nota-corte-card" id="notaCorteCard">
+                <div class="titulo">🎯 Nota de Corte Estimada (Modalidade)</div>
+                <div class="nota" id="notaCorte">-</div>
+                <div class="comparacao" id="comparacaoNota"></div>
+                <div class="diferenca" id="diferencaNota"></div>
             </div>
 
             <div class="concorrencia-grid">
@@ -650,6 +696,16 @@
             const vagasModalidade = cursoInfo.vagas[modalidade] || 0;
             const vagasTotal = cursoInfo.vagas.total;
 
+            // Calcular nota de corte (nota do último aprovado na modalidade)
+            const inscricoesOrdenadas = [...inscricoesModalidade].sort((a, b) => b.nota - a.nota);
+            let notaCorte = 0;
+            if (inscricoesOrdenadas.length >= vagasModalidade && vagasModalidade > 0) {
+                notaCorte = inscricoesOrdenadas[vagasModalidade - 1].nota;
+            } else if (inscricoesOrdenadas.length > 0) {
+                // Se há menos candidatos que vagas, a nota de corte é a menor nota
+                notaCorte = inscricoesOrdenadas[inscricoesOrdenadas.length - 1].nota;
+            }
+
             // Determinar status
             const aprovadoModalidade = posicaoModalidade <= vagasModalidade;
             const aprovadoGeral = posicaoGeral <= vagasTotal;
@@ -667,7 +723,9 @@
                 vagasModalidade,
                 vagasTotal,
                 aprovadoModalidade,
-                aprovadoGeral
+                aprovadoGeral,
+                notaCorte,
+                inscricoesModalidade: inscricoesOrdenadas
             });
         }
 
@@ -697,6 +755,26 @@
             } else {
                 const faltam = dados.posicaoModalidade - dados.vagasModalidade;
                 statusSubtext.textContent = `Você está ${faltam} posição(ões) fora do número de vagas na sua modalidade.`;
+            }
+
+            // Nota de Corte
+            const notaCorteCard = document.getElementById('notaCorteCard');
+            const notaCorteEl = document.getElementById('notaCorte');
+            const comparacaoNota = document.getElementById('comparacaoNota');
+            const diferencaNota = document.getElementById('diferencaNota');
+            
+            notaCorteCard.className = 'nota-corte-card ' + (aprovado ? 'dentro' : '');
+            notaCorteEl.textContent = dados.notaCorte.toFixed(2);
+            
+            const diferenca = dados.nota - dados.notaCorte;
+            if (diferenca >= 0) {
+                comparacaoNota.textContent = `Sua nota está ACIMA da nota de corte`;
+                diferencaNota.textContent = `+${diferenca.toFixed(2)} pontos`;
+                diferencaNota.style.display = 'inline-block';
+            } else {
+                comparacaoNota.textContent = `Sua nota está ABAIXO da nota de corte`;
+                diferencaNota.textContent = `${diferenca.toFixed(2)} pontos`;
+                diferencaNota.style.display = 'inline-block';
             }
 
             // Estatísticas
