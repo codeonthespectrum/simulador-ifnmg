@@ -1,6 +1,8 @@
-# Simulador de Posição IFNMG - Processo Seletivo 2025
+# Simulador de Posição IFNMG - Processo Seletivo 2025/2026
 
 Simulador que permite aos candidatos verificar sua posição estimada no processo seletivo do IFNMG, baseado no Edital 1048/2025.
+
+- [Simule sua posição agora!](https://codeonthespectrum.github.io/simulador-ifnmg/)
 
 ## 📋 Funcionalidades
 
@@ -8,40 +10,15 @@ Simulador que permite aos candidatos verificar sua posição estimada no process
 - **Modalidades de Concorrência**: AC, V_PCD, V_EFA, LB_PPI, LB_EP, LB_PCD, LB_Q, LI_PPI, LI_EP, LI_PCD, LI_Q
 - **Simulação de Posição**: Veja sua posição na modalidade e no geral
 - **Status de Aprovação**: Indica "Provável Aprovação" ou "Provável Reprovação"
+- **Correlação Candidato/Vaga**: Veja quantas pessoas estão concorrendo a uma vaga na sua modalidade e no geral.
 
 ## 🚀 Como Usar
 
-### Opção 1: Servidor Python (Recomendado)
-
-```bash
-cd /Users/kimgomes/Desktop/simulador-ifnmg
-source venv/bin/activate
-python3 servidor.py
-```
-
-O navegador abrirá automaticamente em `http://localhost:8000`
-
-### Opção 2: Abrir diretamente
-
-Abra o arquivo `index.html` no navegador (alguns navegadores podem bloquear o carregamento do JSON por questões de segurança CORS).
-
-## 📁 Estrutura do Projeto
-
-```
-simulador-ifnmg/
-├── index.html              # Aplicação web principal
-├── dados_simulador.json    # Dados extraídos dos PDFs
-├── extrair_dados.py        # Script para extrair dados dos PDFs
-├── servidor.py             # Servidor HTTP simples
-├── venv/                   # Ambiente virtual Python
-└── PDFs originais:
-    ├── ANEXO-I-Cursos-e-Vagas-Ofertadas-Atualizado-com-3a-retificacao.pdf
-    └── LISTA-PRELIMINAR-DE-INSCRICOES-DEFERIDAS-E-INDEFERIDAS-EDITAL-1048.pdf
-```
+### [Deploy](https://codeonthespectrum.github.io/simulador-ifnmg/)
 
 ## 📊 Dados Extraídos
 
-### Cursos com código especial (conforme instrução):
+### Cursos com código especial (conforme edital):
 - **3011** - Técnico em Inteligência Artificial (Polo: Campus Montes Claros) - **40 vagas**
 - **3012** - Técnico em Inteligência Artificial (Polo: CEADi Montes Claros) - **160 vagas**
 
@@ -50,15 +27,6 @@ simulador-ifnmg/
 - **7.031 inscrições deferidas** processadas
 - **11 modalidades de concorrência**
 
-## 🔧 Atualizar Dados
-
-Se houver uma nova lista de inscrições, execute:
-
-```bash
-cd /Users/kimgomes/Desktop/simulador-ifnmg
-source venv/bin/activate
-python3 extrair_dados.py
-```
 
 ## ⚠️ Aviso Importante
 
