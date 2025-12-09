@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Posição - IFNMG Processo Seletivo 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a5f2a;
+            --primary-dark: #134a20;
+            --secondary: #f5f5f5;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --text: #333;
+            --text-light: #666;
+            --border: #ddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: var(--primary);
+            border-radius: 15px;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 95, 42, 0.1);
+        }
+
+        .form-group input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .form-group input::-webkit-outer-spin-button,
+        .form-group input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .resultado {
+            display: none;
+        }
+
+        .resultado.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .resultado-header {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .resultado-header.aprovado {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid var(--success);
+        }
+
+        .resultado-header.reprovado {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 2px solid var(--danger);
+        }
+
+        .resultado-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .resultado-header.aprovado h3 {
+            color: var(--success);
+        }
+
+        .resultado-header.reprovado h3 {
+            color: var(--danger);
+        }
+
+        .resultado-header p {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--secondary);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .detalhes-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .detalhes-table th,
+        .detalhes-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detalhes-table th {
+            background: var(--secondary);
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .detalhes-table tr:hover {
+            background: #fafafa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge.success {
+            background: #d4edda;
+            color: var(--success);
+        }
+
+        .badge.danger {
+            background: #f8d7da;
+            color: var(--danger);
+        }
+
+        .badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .concorrencia-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .concorrencia-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .concorrencia-card.modalidade {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .concorrencia-card .titulo {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .concorrencia-card .valor {
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .concorrencia-card .detalhe {
+            font-size: 0.8rem;
+            opacity: 0.85;
+            margin-top: 5px;
+        }
+
+        .concorrencia-card .barra-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 8px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .concorrencia-card .barra {
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b6d4fe;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .info-box h4 {
+            color: #084298;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #084298;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .curso-info {
+            background: #fff3cd;
+            border: 1px solid #ffecb5;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .curso-info h4 {
+            color: #664d03;
+            margin-bottom: 5px;
+        }
+
+        .curso-info p {
+            color: #664d03;
+            font-size: 0.9rem;
+        }
+
+        .vagas-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .vaga-item {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+        }
+
+        .vaga-item strong {
+            color: var(--primary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .disclaimer {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #856404;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stat-card .value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎓 Simulador de Posição IFNMG</h1>
+            <p>Processo Seletivo 2025 - Edital 1048/2025</p>
+        </header>
+
+        <div class="card">
+            <h2>Simular Posição</h2>
+            
+            <div class="form-group">
+                <label for="curso">Selecione o Curso</label>
+                <select id="curso" onchange="atualizarModalidades()">
+                    <option value="">-- Selecione o curso --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="modalidade">Modalidade de Concorrência</label>
+                <select id="modalidade">
+                    <option value="">-- Selecione a modalidade --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="nota">Sua Nota (0 a 100)</label>
+                <input type="number" id="nota" placeholder="Ex: 75.50" min="0" max="100" step="0.01">
+            </div>
+
+            <button class="btn" onclick="simular()">🔍 Simular Posição</button>
+        </div>
+
+        <div class="card resultado" id="resultado">
+            <h2>Resultado da Simulação</h2>
+            
+            <div class="curso-info" id="cursoInfo"></div>
+
+            <div class="resultado-header" id="resultadoHeader">
+                <h3 id="statusText"></h3>
+                <p id="statusSubtext"></p>
+            </div>
+
+            <div class="concorrencia-grid">
+                <div class="concorrencia-card modalidade">
+                    <div class="titulo">📊 Concorrência na Modalidade</div>
+                    <div class="valor" id="concorrenciaModalidade">-</div>
+                    <div class="detalhe" id="detalheConcorrenciaMod">candidatos por vaga</div>
+                    <div class="barra-container">
+                        <div class="barra" id="barraMod" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="concorrencia-card">
+                    <div class="titulo">📊 Concorrência Geral</div>
+                    <div class="valor" id="concorrenciaGeral">-</div>
+                    <div class="detalhe" id="detalheConcorrenciaGeral">candidatos por vaga</div>
+                    <div class="barra-container">
+                        <div class="barra" id="barraGeral" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="value" id="posicaoModalidade">-</div>
+                    <div class="label">Posição na Modalidade</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="totalModalidade">-</div>
+                    <div class="label">Concorrentes na Modalidade</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="posicaoGeral">-</div>
+                    <div class="label">Posição Geral</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="totalGeral">-</div>
+                    <div class="label">Concorrentes no Geral</div>
+                </div>
+            </div>
+
+            <h3 style="margin: 20px 0 15px; color: var(--text);">📊 Detalhes</h3>
+            <table class="detalhes-table">
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Sua Posição</th>
+                        <th>Vagas Disponíveis</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="detalhesBody">
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <h4>ℹ️ Informações sobre Modalidades</h4>
+                <p>
+                    <strong>AC:</strong> Ampla Concorrência<br>
+                    <strong>V_PCD:</strong> PcD - Ampla Concorrência (vaga exclusiva)<br>
+                    <strong>V_EFA:</strong> Egresso da EFA (Escola Família Agrícola)<br>
+                    <strong>LB_PPI:</strong> Escola Pública, Renda ≤ 1SM, Preto/Pardo/Indígena<br>
+                    <strong>LB_EP:</strong> Escola Pública, Renda ≤ 1SM<br>
+                    <strong>LB_PCD:</strong> Escola Pública, Renda ≤ 1SM, PcD<br>
+                    <strong>LB_Q:</strong> Escola Pública, Renda ≤ 1SM, Quilombola<br>
+                    <strong>LI_PPI:</strong> Escola Pública, Independente de Renda, Preto/Pardo/Indígena<br>
+                    <strong>LI_EP:</strong> Escola Pública, Independente de Renda<br>
+                    <strong>LI_PCD:</strong> Escola Pública, Independente de Renda, PcD<br>
+                    <strong>LI_Q:</strong> Escola Pública, Independente de Renda, Quilombola
+                </p>
+            </div>
+
+            <div class="disclaimer">
+                ⚠️ <strong>Atenção:</strong> Esta é uma simulação baseada na lista preliminar de inscrições deferidas. 
+                O resultado final pode variar após recursos, desistências e outras alterações no processo seletivo oficial.
+                Consulte sempre os canais oficiais do IFNMG para informações definitivas.
+            </div>
+        </div>
+
+        <footer>
+            <p>Desenvolvido para auxiliar candidatos do IFNMG</p>
+            <p>Dados baseados no Edital 1048/2025 e Lista Preliminar de Inscrições</p>
+        </footer>
+    </div>
+
+    <script>
+        let dadosSimulador = null;
+
+        // Carregar dados ao iniciar
+        async function carregarDados() {
+            try {
+                const response = await fetch('dados_simulador.json');
+                dadosSimulador = await response.json();
+                popularCursos();
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                alert('Erro ao carregar dados. Verifique se o arquivo dados_simulador.json está presente.');
+            }
+        }
+
+        function popularCursos() {
+            const selectCurso = document.getElementById('curso');
+            
+            // Agrupar cursos por nome
+            const cursosAgrupados = {};
+            for (const [codigo, info] of Object.entries(dadosSimulador.cursos)) {
+                const key = `${codigo} - ${info.nome} - ${info.campus}`;
+                cursosAgrupados[key] = {
+                    codigo,
+                    nome: info.nome,
+                    campus: info.campus,
+                    vagas: info.vagas
+                };
+            }
+
+            // Ordenar por nome
+            const cursosOrdenados = Object.entries(cursosAgrupados).sort((a, b) => 
+                a[1].nome.localeCompare(b[1].nome) || a[1].campus.localeCompare(b[1].campus)
+            );
+
+            for (const [key, info] of cursosOrdenados) {
+                const option = document.createElement('option');
+                option.value = info.codigo;
+                option.textContent = `${info.nome} - ${info.campus}`;
+                selectCurso.appendChild(option);
+            }
+        }
+
+        function atualizarModalidades() {
+            const codigoCurso = document.getElementById('curso').value;
+            const selectModalidade = document.getElementById('modalidade');
+            
+            selectModalidade.innerHTML = '<option value="">-- Selecione a modalidade --</option>';
+
+            if (!codigoCurso) return;
+
+            const nomesModalidades = {
+                'AC': 'Ampla Concorrência',
+                'V_PCD': 'PcD - Ampla Concorrência',
+                'V_EFA': 'Egresso EFA',
+                'LB_PPI': 'Escola Pública, Renda ≤ 1SM, PPI',
+                'LB_EP': 'Escola Pública, Renda ≤ 1SM',
+                'LB_PCD': 'Escola Pública, Renda ≤ 1SM, PcD',
+                'LB_Q': 'Escola Pública, Renda ≤ 1SM, Quilombola',
+                'LI_PPI': 'Escola Pública, Indep. Renda, PPI',
+                'LI_EP': 'Escola Pública, Indep. Renda',
+                'LI_PCD': 'Escola Pública, Indep. Renda, PcD',
+                'LI_Q': 'Escola Pública, Indep. Renda, Quilombola'
+            };
+
+            // Mostrar TODAS as modalidades que têm vagas no curso (baseado nas vagas, não nas inscrições)
+            const cursoInfo = dadosSimulador.cursos[codigoCurso];
+            const todasModalidades = ['AC', 'V_PCD', 'V_EFA', 'LB_PPI', 'LB_EP', 'LB_PCD', 'LB_Q', 'LI_PPI', 'LI_EP', 'LI_PCD', 'LI_Q'];
+            
+            // Filtrar apenas modalidades que têm vagas neste curso
+            const modalidadesDisponiveis = todasModalidades.filter(mod => cursoInfo.vagas[mod] > 0);
+
+            for (const mod of modalidadesDisponiveis) {
+                const option = document.createElement('option');
+                option.value = mod;
+                option.textContent = nomesModalidades[mod] || mod;
+                selectModalidade.appendChild(option);
+            }
+        }
+
+        function simular() {
+            const codigoCurso = document.getElementById('curso').value;
+            const modalidade = document.getElementById('modalidade').value;
+            const notaInput = document.getElementById('nota').value;
+
+            if (!codigoCurso || !modalidade || !notaInput) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            const nota = parseFloat(notaInput);
+            if (isNaN(nota) || nota < 0 || nota > 100) {
+                alert('Por favor, insira uma nota válida entre 0 e 100.');
+                return;
+            }
+
+            const cursoInfo = dadosSimulador.cursos[codigoCurso];
+            const inscricoesCurso = dadosSimulador.inscricoes.filter(i => i.codigo === codigoCurso);
+            
+            // Calcular posição na modalidade
+            const inscricoesModalidade = inscricoesCurso.filter(i => i.modalidade === modalidade);
+            const posicaoModalidade = inscricoesModalidade.filter(i => i.nota > nota).length + 1;
+            const totalModalidade = inscricoesModalidade.length + 1; // +1 para incluir o candidato
+
+            // Calcular posição geral
+            const posicaoGeral = inscricoesCurso.filter(i => i.nota > nota).length + 1;
+            const totalGeral = inscricoesCurso.length + 1;
+
+            // Vagas na modalidade
+            const vagasModalidade = cursoInfo.vagas[modalidade] || 0;
+            const vagasTotal = cursoInfo.vagas.total;
+
+            // Determinar status
+            const aprovadoModalidade = posicaoModalidade <= vagasModalidade;
+            const aprovadoGeral = posicaoGeral <= vagasTotal;
+
+            // Exibir resultado
+            exibirResultado({
+                cursoInfo,
+                codigoCurso,
+                modalidade,
+                nota,
+                posicaoModalidade,
+                totalModalidade,
+                posicaoGeral,
+                totalGeral,
+                vagasModalidade,
+                vagasTotal,
+                aprovadoModalidade,
+                aprovadoGeral
+            });
+        }
+
+        function exibirResultado(dados) {
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.classList.add('show');
+
+            // Info do curso
+            document.getElementById('cursoInfo').innerHTML = `
+                <h4>📚 ${dados.cursoInfo.nome}</h4>
+                <p><strong>Campus/Polo:</strong> ${dados.cursoInfo.campus} | <strong>Código:</strong> ${dados.codigoCurso}</p>
+                <p><strong>Sua nota:</strong> ${dados.nota.toFixed(2)} pontos</p>
+            `;
+
+            // Status principal
+            const header = document.getElementById('resultadoHeader');
+            const statusText = document.getElementById('statusText');
+            const statusSubtext = document.getElementById('statusSubtext');
+
+            const aprovado = dados.aprovadoModalidade;
+            
+            header.className = 'resultado-header ' + (aprovado ? 'aprovado' : 'reprovado');
+            statusText.textContent = aprovado ? '✅ PROVÁVEL APROVAÇÃO' : '❌ PROVÁVEL REPROVAÇÃO';
+            
+            if (aprovado) {
+                statusSubtext.textContent = `Você está na posição ${dados.posicaoModalidade}º de ${dados.vagasModalidade} vagas na sua modalidade!`;
+            } else {
+                const faltam = dados.posicaoModalidade - dados.vagasModalidade;
+                statusSubtext.textContent = `Você está ${faltam} posição(ões) fora do número de vagas na sua modalidade.`;
+            }
+
+            // Estatísticas
+            document.getElementById('posicaoModalidade').textContent = `${dados.posicaoModalidade}º`;
+            document.getElementById('totalModalidade').textContent = dados.totalModalidade;
+            document.getElementById('posicaoGeral').textContent = `${dados.posicaoGeral}º`;
+            document.getElementById('totalGeral').textContent = dados.totalGeral;
+
+            // Calcular e exibir concorrência
+            const concorrenciaMod = dados.vagasModalidade > 0 ? (dados.totalModalidade / dados.vagasModalidade) : 0;
+            const concorrenciaGeral = dados.vagasTotal > 0 ? (dados.totalGeral / dados.vagasTotal) : 0;
+            
+            document.getElementById('concorrenciaModalidade').textContent = concorrenciaMod.toFixed(2);
+            document.getElementById('concorrenciaGeral').textContent = concorrenciaGeral.toFixed(2);
+            
+            document.getElementById('detalheConcorrenciaMod').textContent = 
+                `${dados.totalModalidade} candidatos para ${dados.vagasModalidade} vaga${dados.vagasModalidade > 1 ? 's' : ''}`;
+            document.getElementById('detalheConcorrenciaGeral').textContent = 
+                `${dados.totalGeral} candidatos para ${dados.vagasTotal} vagas`;
+            
+            // Barra de progresso (quanto maior a concorrência, mais cheia a barra - max 100%)
+            const maxConcorrencia = 50; // Considerar 50 candidatos/vaga como máximo
+            const pctMod = Math.min((concorrenciaMod / maxConcorrencia) * 100, 100);
+            const pctGeral = Math.min((concorrenciaGeral / maxConcorrencia) * 100, 100);
+            
+            document.getElementById('barraMod').style.width = `${pctMod}%`;
+            document.getElementById('barraGeral').style.width = `${pctGeral}%`;
+
+            // Tabela de detalhes
+            const nomesModalidades = {
+                'AC': 'Ampla Concorrência',
+                'V_PCD': 'PcD - Ampla Concorrência',
+                'V_EFA': 'Egresso EFA',
+                'LB_PPI': 'EP, Renda ≤ 1SM, PPI',
+                'LB_EP': 'EP, Renda ≤ 1SM',
+                'LB_PCD': 'EP, Renda ≤ 1SM, PcD',
+                'LB_Q': 'EP, Renda ≤ 1SM, Quilombola',
+                'LI_PPI': 'EP, Indep. Renda, PPI',
+                'LI_EP': 'EP, Indep. Renda',
+                'LI_PCD': 'EP, Indep. Renda, PcD',
+                'LI_Q': 'EP, Indep. Renda, Quilombola'
+            };
+
+            const tbody = document.getElementById('detalhesBody');
+            tbody.innerHTML = '';
+
+            // Linha da modalidade selecionada
+            const rowMod = document.createElement('tr');
+            rowMod.innerHTML = `
+                <td><strong>${nomesModalidades[dados.modalidade] || dados.modalidade}</strong></td>
+                <td>${dados.posicaoModalidade}º de ${dados.totalModalidade}</td>
+                <td>${dados.vagasModalidade}</td>
+                <td><span class="badge ${dados.aprovadoModalidade ? 'success' : 'danger'}">${dados.aprovadoModalidade ? 'Dentro' : 'Fora'}</span></td>
+            `;
+            tbody.appendChild(rowMod);
+
+            // Linha geral
+            const rowGeral = document.createElement('tr');
+            rowGeral.innerHTML = `
+                <td><strong>Classificação Geral</strong></td>
+                <td>${dados.posicaoGeral}º de ${dados.totalGeral}</td>
+                <td>${dados.vagasTotal}</td>
+                <td><span class="badge ${dados.aprovadoGeral ? 'success' : 'danger'}">${dados.aprovadoGeral ? 'Dentro' : 'Fora'}</span></td>
+            `;
+            tbody.appendChild(rowGeral);
+
+            // Scroll para resultado
+            resultadoDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', carregarDados);
+    </script>
+</body>
+</html>
