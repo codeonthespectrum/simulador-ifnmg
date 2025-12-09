@@ -11,6 +11,7 @@ Simulador que permite aos candidatos verificar sua posição estimada no process
 - **Simulação de Posição**: Veja sua posição na modalidade e no geral
 - **Status de Aprovação**: Indica "Provável Aprovação" ou "Provável Reprovação"
 - **Correlação Candidato/Vaga**: Veja quantas pessoas estão concorrendo a uma vaga na sua modalidade e no geral.
+- **Nota de Corte**: Veja a possível nota de corte da sua modalidade
 
 ## 🚀 Como Usar
 
